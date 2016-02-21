@@ -1,0 +1,51 @@
+PATH := node_modules/.bin:$(PATH)
+NPM=npm
+SOURCE_DIR=src
+DIST_DIR=lib
+TEST_REPORTS_DIR=reports
+COVERAGE_REPORTS_DIR=coverage
+CODE_REPORTS_DIR=plato
+ROOT = index.js
+SOURCES = $(ROOT) `find $(SOURCE_DIR)`
+SCRIPTS = `find scripts -name "*.js"`
+TESTS = `find __tests__ -name "*.js"`
+MOCKS = `find __mocks__ -name "*.js"`
+JESTRC = .jestrc
+TEST_FLAGS =
+
+LINT = standard
+TEST = jest -c $(JESTRC) $(TEST_FLAGS)
+BABEL = babel $(SOURCE_DIR) -d $(DIST_DIR)
+
+all: i test clean babel
+
+i:
+	$(NPM) i;
+
+babel:
+	rm -rf $(DIST_DIR);
+	$(BABEL);
+
+test: lint
+	rm -rf $(TEST_REPORTS_DIR);
+	mkdir -p $(TEST_REPORTS_DIR);
+	JEST_JUNIT_REPORTS_DIR=$(TEST_REPORTS_DIR) $(TEST);
+
+lint:
+	$(LINT) $(SOURCES) $(TESTS) $(MOCKS) $(SCRIPTS);
+
+clean:
+	rm -rf $(DIST_DIR) \
+	$(TEST_REPORTS_DIR) \
+	$(COVERAGE_REPORTS_DIR) \
+	$(CODE_REPORTS_DIR);
+
+watch:
+
+.PHONY : all \
+	babel \
+	clean \
+	i \
+	lint \
+	test \
+	watch

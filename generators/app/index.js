@@ -1,7 +1,4 @@
 'use strict';
-const superb = require('superb');
-const normalizeUrl = require('normalize-url');
-const humanizeUrl = require('humanize-url');
 const yeoman = require('yeoman-generator');
 const _s = require('underscore.string');
 
@@ -15,33 +12,12 @@ module.exports = yeoman.Base.extend({
 			message: 'What do you want to name your module?',
 			default: this.appname.replace(/\s/g, '-'),
 			filter: x => _s.slugify(x)
-		}, {
-			name: 'githubUsername',
-			message: 'What is your GitHub username?',
-			store: true,
-			validate: x => x.length > 0 ? true : 'You have to provide a username'
-		}, {
-			name: 'website',
-			message: 'What is the URL of your website?',
-			store: true,
-			validate: x => x.length > 0 ? true : 'You have to provide a website URL',
-			filter: x => normalizeUrl(x)
-		}, {
-			name: 'cli',
-			message: 'Do you need a CLI?',
-			type: 'confirm',
-			default: false
 		}], props => {
 			const tpl = {
 				moduleName: props.moduleName,
 				camelModuleName: _s.camelize(props.moduleName),
-				githubUsername: props.githubUsername,
 				name: self.user.git.name(),
 				email: self.user.git.email(),
-				website: props.website,
-				humanizedWebsite: humanizeUrl(props.website),
-				superb: superb(),
-				cli: props.cli
 			};
 
 			const mv = (from, to) => {
@@ -49,19 +25,22 @@ module.exports = yeoman.Base.extend({
 			};
 
 			self.fs.copyTpl([
-				`${self.templatePath()}/**`,
-				'!**/cli.js'
+				`${self.templatePath()}/**`
 			], self.destinationPath(), tpl);
-
-			if (props.cli) {
-				self.fs.copyTpl(self.templatePath('cli.js'), self.destinationPath('cli.js'), tpl);
-			}
 
 			mv('editorconfig', '.editorconfig');
 			mv('gitattributes', '.gitattributes');
 			mv('gitignore', '.gitignore');
 			mv('travis.yml', '.travis.yml');
 			mv('_package.json', 'package.json');
+			mv('_Makefile', 'Makefile');
+			mv('flowconfig', '.flowconfig');
+			mv('jestrc', '.jestrc');
+			mv('babelrc', '.babelrc');
+			mv('nvmrc', '.nvmrc');
+			mv('_README.md', 'README.md');
+			mv('testsetup.js', 'scripts/testsetup.js');
+			mv('-test.js', '__tests__/-test.js');
 
 			cb();
 		});
@@ -69,7 +48,7 @@ module.exports = yeoman.Base.extend({
 	git() {
 		this.spawnCommandSync('git', ['init']);
 	},
-	install() {
-		this.installDependencies({bower: false});
+	end() {
+		this.spawnCommandSync('mkdir', ['-p', 'src', '__mocks__']);
 	}
 });

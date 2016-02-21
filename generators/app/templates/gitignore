@@ -1,0 +1,6 @@
+plato/
+coverage/
+test-reports/
+node_modules/
+npm-debug.log
+*.buf*
