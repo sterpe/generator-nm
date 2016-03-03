@@ -1,5 +1,5 @@
 PATH := node_modules/.bin:$(PATH)
-NPM=npm
+NPM=node_modules/.bin/npm
 SOURCE_DIR=src
 DIST_DIR=lib
 TEST_REPORTS_DIR=reports
@@ -17,9 +17,23 @@ LINT = standard
 TEST = jest -c $(JESTRC) $(TEST_FLAGS)
 BABEL = babel $(SOURCE_DIR) -d $(DIST_DIR)
 
-all: i test clean babel
+all: i test clean babel | configure
+
+configure:
+ifneq "$(shell echo $(NODE_VERSION) | sed 's/^v\(.\).*/\1/')" "$(NVMRC)"
+$(info )
+$(info | Pro tip: install the node version manager (nvm) to manage multiple nodes.)
+$(info | https://github.com/creationix/nvm)
+$(info )
+$(info | Hint: `nvm install $(NVMRC)`)
+$(info )
+$(error No or wrong node version.  Found "$(NODE_VERSION)", please install node $(NVMRC).x)
+endif
 
 i:
+	npm cache clear;
+	npm i npm@2;
+	$(NPM) cache clear;
 	$(NPM) i;
 
 babel:
@@ -44,6 +58,7 @@ watch:
 
 .PHONY : all \
 	babel \
+	configure \
 	clean \
 	i \
 	lint \
