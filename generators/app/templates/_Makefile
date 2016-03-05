@@ -1,5 +1,7 @@
 PATH := node_modules/.bin:$(PATH)
 NPM=node_modules/.bin/npm
+NODE_VERSION=$(shell node --version)
+NVMRC=$(shell cat .nvmrc)
 SOURCE_DIR=src
 DIST_DIR=dist
 TEST_REPORTS_DIR=reports
@@ -30,7 +32,7 @@ $(info | https://github.com/creationix/nvm)
 $(info )
 $(info | Hint: `nvm install $(NVMRC)`)
 $(info )
-$(error No or wrong node version.  Found "$(NODE_VERSION)", please install node $(NVMRC).x)
+$(error No or wrong node version.  Found "$(NODE_VERSION)", please install node $(NVMRC))
 endif
 
 i:
