@@ -1,7 +1,7 @@
 PATH := node_modules/.bin:$(PATH)
 NPM=node_modules/.bin/npm
 SOURCE_DIR=src
-DIST_DIR=lib
+DIST_DIR=dist
 TEST_REPORTS_DIR=reports
 COVERAGE_REPORTS_DIR=coverage
 CODE_REPORTS_DIR=plato
@@ -11,10 +11,13 @@ SCRIPTS = `find scripts -name "*.js"`
 TESTS = `find __tests__ -name "*.js"`
 MOCKS = `find __mocks__ -name "*.js"`
 JESTRC = .jestrc
-TEST_FLAGS =
+JEST_FLAGS =
+NODE_ENVIRONMENT=
+DEVELOPMENT=development
+PRODUCTION=production
 
 LINT = standard
-TEST = jest -c $(JESTRC) $(TEST_FLAGS)
+TEST = jest -c $(JESTRC) $(JEST_FLAGS)
 BABEL = babel $(SOURCE_DIR) -d $(DIST_DIR)
 
 all: i test clean babel | configure
@@ -34,7 +37,11 @@ i:
 	npm cache clear;
 	npm i npm@2;
 	$(NPM) cache clear;
+ifeq "$(NODE_ENVIRONMENT)" "$(DEVELOPMENT)"
+	$(NPM) link;
+else
 	$(NPM) i;
+endif
 
 babel:
 	rm -rf $(DIST_DIR);
