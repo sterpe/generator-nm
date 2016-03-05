@@ -4,6 +4,12 @@
 
 ## What is it?
 
+### install
+```
+npm i --S <%= moduleName %>
+```
+
+### usage
 ```
 ```
 
