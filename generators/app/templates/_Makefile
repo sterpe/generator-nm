@@ -22,19 +22,23 @@ LINT = standard
 TEST = jest -c $(JESTRC) $(JEST_FLAGS)
 BABEL = babel $(ROOT) -d $(DIST_DIR)
 
+define postinstall-message
+@echo ""
+@echo "**** ATTENTION ****"
+@echo "|"
+@echo "| Please execute the following command:"
+@echo "|   \`npm --version\` should be: `.node_modules/.bin/npm --version`"
+@echo "|"
+@echo "| If not, please source \`scripts/set_environment.sh\` into the current shell."
+@echo "|"
+@echo "| Hint: \`. scripts/set_environments.sh\`"
+@echo "|"
+@echo "**** THANK YOU ****"
+@echo ""
+endef
+
 all: i test clean build
-	@echo "";
-	@echo "**** ATTENTION ****";
-	@echo "|";
-	@echo "| Please execute the following command:";
-	@echo "|   \`npm --version\` should be: `.node_modules/.bin/npm --version`";
-	@echo "|";
-	@echo "| If not, please source \`scripts/set_environment.sh\` into the current shell.";
-	@echo "|";
-	@echo "| Hint: \`. scripts/set_environments.sh\`";
-	@echo "|";
-	@echo "**** THANK YOU ****";
-	@echo "";
+	$(postinstall-message)
 
 configure:
 ifneq "$(shell echo $(NODE_VERSION) | sed 's/^v\(.\).*/\1/')" "$(NVMRC)"
@@ -57,7 +61,7 @@ endif
 	@echo "| Installing \`npm\` locally.";
 	@.node_modules/.bin/npm i npm@3;
 	@rm -rf .node_modules;
-	@mv node_modules .node_modules
+	@mv node_modules .node_modules;
 	@echo "| Success!  I will now install the project dependencies.";
 
 i: .npm
@@ -66,18 +70,7 @@ ifeq "$(NODE_ENVIRONMENT)" "$(DEVELOPMENT)"
 else
 	$(NPM) i;
 endif
-	@echo "";
-	@echo "**** ATTENTION ****";
-	@echo "|";
-	@echo "| Please execute the following command:";
-	@echo "|   \`npm --version\` should be: `.node_modules/.bin/npm --version`";
-	@echo "|";
-	@echo "| If not, please source \`scripts/set_environment.sh\` into the current shell.";
-	@echo "|";
-	@echo "| Hint: \`. scripts/set_environments.sh\`";
-	@echo "|";
-	@echo "**** THANK YOU ****";
-	@echo "";
+	$(postinstall-message)
 
 build: babel
 
