@@ -22,7 +22,7 @@ LINT = standard
 TEST = jest -c $(JESTRC) $(JEST_FLAGS)
 BABEL = babel $(SOURCE_DIR) -d $(DIST_DIR)
 
-all: i test clean babel | configure
+all: i test clean build | configure
 
 configure:
 ifneq "$(shell echo $(NODE_VERSION) | sed 's/^v\(.\).*/\1/')" "$(NVMRC)"
@@ -44,6 +44,8 @@ ifeq "$(NODE_ENVIRONMENT)" "$(DEVELOPMENT)"
 else
 	$(NPM) i;
 endif
+
+build: babel
 
 babel:
 	rm -rf $(DIST_DIR);
@@ -67,6 +69,7 @@ watch:
 
 .PHONY : all \
 	babel \
+	build \
 	configure \
 	clean \
 	i \
