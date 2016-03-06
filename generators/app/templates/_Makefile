@@ -70,7 +70,7 @@ endif
 	@echo "**** ATTENTION ****";
 	@echo "|";
 	@echo "| Please execute the following command:";
-	@echo "|   \`npm --version\` should be: `npm --version`";
+	@echo "|   \`npm --version\` should be: `.node_modules/.bin/npm --version`";
 	@echo "|";
 	@echo "| If not, please source \`scripts/set_environment.sh\` into the current shell.";
 	@echo "|";
