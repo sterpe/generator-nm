@@ -38,7 +38,7 @@ module.exports = yeoman.Base.extend({
       mv('jestrc', '.jestrc');
       mv('babelrc', '.babelrc');
       mv('nvmrc', '.nvmrc');
-      mp('npmrc', '.npmrc');
+      mv('npmrc', '.npmrc');
       mv('_README.md', 'README.md');
       mv('testsetup.js', 'scripts/testsetup.js');
       mv('set_environment.sh', 'scripts/set_environment.sh');
