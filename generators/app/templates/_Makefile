@@ -1,10 +1,10 @@
 PATH := node_modules/.bin:$(PATH)
-NPM=node_modules/.bin/npm
+NPM=.node_modules/.bin/npm
 NODE_VERSION=$(shell node --version)
 NVMRC=$(shell cat .nvmrc)
 SOURCE_DIR=src
 DIST_DIR=dist
-TEST_REPORTS_DIR=reports
+TEST_REPORTS_DIR=test-reports
 COVERAGE_REPORTS_DIR=coverage
 CODE_REPORTS_DIR=plato
 ROOT = index.js
@@ -20,9 +20,21 @@ PRODUCTION=production
 
 LINT = standard
 TEST = jest -c $(JESTRC) $(JEST_FLAGS)
-BABEL = babel $(SOURCE_DIR) -d $(DIST_DIR)
+BABEL = babel $(ROOT) -d $(DIST_DIR)
 
-all: i test clean build | configure
+all: i test clean build
+	@echo "";
+	@echo "**** ATTENTION ****";
+	@echo "|";
+	@echo "| Please execute the following command:";
+	@echo "|   \`npm --version\` should be: `.node_modules/.bin/npm --version`";
+	@echo "|";
+	@echo "| If not, please source \`scripts/set_environment.sh\` into the current shell.";
+	@echo "|";
+	@echo "| Hint: \`. scripts/set_environments.sh\`";
+	@echo "|";
+	@echo "**** THANK YOU ****";
+	@echo "";
 
 configure:
 ifneq "$(shell echo $(NODE_VERSION) | sed 's/^v\(.\).*/\1/')" "$(NVMRC)"
@@ -35,15 +47,37 @@ $(info )
 $(error No or wrong node version.  Found "$(NODE_VERSION)", please install node $(NVMRC))
 endif
 
-i:
-	npm cache clear;
-	npm i npm@2;
-	$(NPM) cache clear;
+.npm : | configure
+	@echo "| Bootstrapping my \`npm\` with your \`npm\`.";
+	@npm i npm@3;
+	@echo "| Moving the \`node_modules\` folder out of the way.";
+	@mv node_modules .node_modules;
+	@echo "| Clearing the local \`npm\` cache.";
+	@.node_modules/.bin/npm cache clear;
+	@echo "| Installing \`npm\` locally.";
+	@.node_modules/.bin/npm i npm@3;
+	@rm -rf .node_modules;
+	@mv node_modules .node_modules
+	@echo "| Success!  I will now install the project dependencies.";
+
+i: .npm
 ifeq "$(NODE_ENVIRONMENT)" "$(DEVELOPMENT)"
 	$(NPM) link;
 else
 	$(NPM) i;
 endif
+	@echo "";
+	@echo "**** ATTENTION ****";
+	@echo "|";
+	@echo "| Please execute the following command:";
+	@echo "|   \`npm --version\` should be: `npm --version`";
+	@echo "|";
+	@echo "| If not, please source \`scripts/set_environment.sh\` into the current shell.";
+	@echo "|";
+	@echo "| Hint: \`. scripts/set_environments.sh\`";
+	@echo "|";
+	@echo "**** THANK YOU ****";
+	@echo "";
 
 build: babel
 
@@ -59,6 +93,11 @@ test: lint
 lint:
 	$(LINT) $(SOURCES) $(TESTS) $(MOCKS) $(SCRIPTS);
 
+.clean: clean
+	rm -rf .npm;
+	rm -rf .node_modules;
+	rm -rf node_modules;
+
 clean:
 	rm -rf $(DIST_DIR) \
 	$(TEST_REPORTS_DIR) \
@@ -71,6 +110,7 @@ watch:
 	babel \
 	build \
 	configure \
+	.clean \
 	clean \
 	i \
 	lint \
