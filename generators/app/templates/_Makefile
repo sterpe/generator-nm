@@ -53,13 +53,13 @@ endif
 
 .npm : | configure
 	@echo "| Bootstrapping my \`npm\` with your \`npm\`.";
-	@npm i npm@3;
+	@npm i npm@2;
 	@echo "| Moving the \`node_modules\` folder out of the way.";
 	@mv node_modules .node_modules;
 	@echo "| Clearing the local \`npm\` cache.";
 	@.node_modules/.bin/npm cache clear;
 	@echo "| Installing \`npm\` locally.";
-	@.node_modules/.bin/npm i npm@3;
+	@.node_modules/.bin/npm i npm@2;
 	@rm -rf .node_modules;
 	@mv node_modules .node_modules;
 	@echo "| Success!  I will now install the project dependencies.";
