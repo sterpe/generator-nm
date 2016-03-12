@@ -4,7 +4,5 @@
   "modulePathIgnorePatterns": [
     "/.node_modules/",
     "/.npm/"
-  ],
-  "unmockedModulePathPatterns": [
   ]
 }
